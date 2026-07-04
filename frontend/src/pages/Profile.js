@@ -181,7 +181,7 @@ function Profile() {
               <input
                 type="file"
                 className="form-control"
-                accept=".pdf,.doc,.docx"
+                accept=".pdf"
                 onChange={(e) => setResume(e.target.files[0])}
               />
 
