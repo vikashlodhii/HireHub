@@ -20,9 +20,9 @@ function EditProfile() {
     website: "",
   });
 
-  useEffect(() => {
-    fetchProfile();
-  }, []);
+ useEffect(() => {
+  fetchProfile();
+}, []);
 
   const fetchProfile = async () => {
     try {

@@ -12,9 +12,9 @@ function Profile() {
   const [user, setUser] = useState({});
   const [resume, setResume] = useState(null);
 
-  useEffect(() => {
-    fetchProfile();
-  }, []);
+ useEffect(() => {
+  fetchProfile();
+}, []);
 
   const fetchProfile = async () => {
     try {

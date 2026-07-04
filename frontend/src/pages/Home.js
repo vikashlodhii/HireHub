@@ -50,7 +50,7 @@ function Home() {
       );
 
       const jobIds = res.data
-        .filter((app) => app.job) 
+        .filter((app) => app.job)
         .map((app) => app.job._id.toString());
 
       setAppliedJobs(jobIds);
@@ -122,7 +122,7 @@ function Home() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await axios.post(
+      await axios.post(
         `${process.env.REACT_APP_API}/applications/apply/${jobId}`,
         {},
         {
