@@ -1,5 +1,8 @@
 import React, { useEffect, useState, useCallback } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+
 
 function EditProfile() {
   const navigate = useNavigate();
@@ -18,9 +21,7 @@ function EditProfile() {
     website: "",
   });
 
-useEffect(() => {
-  fetchProfile();
-}, [fetchProfile]);
+
 
   const fetchProfile = useCallback(async () => {
   try {
@@ -45,6 +46,10 @@ useEffect(() => {
       [e.target.name]: e.target.value,
     });
   };
+
+  useEffect(() => {
+  fetchProfile();
+}, [fetchProfile]);
 
   const updateProfile = async (e) => {
     e.preventDefault();
