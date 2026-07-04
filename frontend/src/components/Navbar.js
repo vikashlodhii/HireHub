@@ -1,99 +1,129 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
 
-function Navbar() {
+function Navbar({ darkMode, setDarkMode }) {
   const navigate = useNavigate();
+
   const token = localStorage.getItem("token");
+  const role = localStorage.getItem("role");
 
-  let role = null;
-
-  if (token) {
-    try {
-      const decoded = jwtDecode(token);
-      role = decoded.role;
-    } catch (error) {
-      localStorage.removeItem("token");
-    }
-  }
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/");
+  const logout = () => {
+    localStorage.clear();
+    navigate("/login");
   };
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+    <nav
+      className={`navbar navbar-expand-lg shadow-sm sticky-top ${
+        darkMode ? "navbar-dark bg-dark" : "navbar-dark bg-primary"
+      }`}
+    >
+      {" "}
       <div className="container">
-
-        {/* Logo */}
-        <Link
-          className="navbar-brand fw-bold text-info"
-          to={token ? "/home" : "/"}
-        >
-          HireHub 🚀
+        <Link className="navbar-brand fw-bold fs-3" to="/">
+          💼 HireHub
         </Link>
 
-        <div>
-          {!token ? (
-            <>
-              <Link className="btn btn-outline-light me-2" to="/login">
-                Login
-              </Link>
-              <Link className="btn btn-info" to="/signup">
-                Sign Up
-              </Link>
-            </>
-          ) : (
-            <>
-              {/* JobSeeker */}
-              {role === "jobseeker" && (
-                <Link
-                  className="btn btn-outline-light me-2"
-                  to="/my-applications"
-                >
-                  My Applications
-                </Link>
-              )}
+        <button
+          className="navbar-toggler"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span className="navbar-toggler-icon"></span>
+        </button>
 
-              {/* Recruiter */}
-              {role === "recruiter" && (
-                <>
-                  <Link
-                    className="btn btn-success me-2"
-                    to="/create-job"
-                  >
-                    Post Job
+        <div className="collapse navbar-collapse" id="navbarNav">
+          <ul className="navbar-nav ms-auto align-items-lg-center">
+            {!token ? (
+              <>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/">
+                    Home
                   </Link>
+                </li>
 
-                  <Link
-                    className="btn btn-outline-light me-2"
-                    to="/recruiter"
-                  >
-                    Dashboard
+                <li className="nav-item">
+                  <Link className="nav-link" to="/login">
+                    Login
                   </Link>
-                </>
-              )}
+                </li>
 
-              {/* Profile */}
-              <Link
-                className="btn btn-outline-info me-2"
-                to="/profile"
-              >
-                Profile
-              </Link>
+                <li className="nav-item">
+                  <Link className="btn btn-light ms-lg-3" to="/signup">
+                    Sign Up
+                  </Link>
+                </li>
+              </>
+            ) : (
+              <>
+                {role === "jobseeker" && (
+                  <>
+                    <li className="nav-item">
+                      <Link className="nav-link" to="/home">
+                        Jobs
+                      </Link>
+                    </li>
 
-              {/* Logout */}
-              <button
-                className="btn btn-danger"
-                onClick={handleLogout}
-              >
-                Logout
-              </button>
-            </>
-          )}
+                    <li className="nav-item">
+                      <Link className="nav-link" to="/my-applications">
+                        My Applications
+                      </Link>
+                    </li>
+                    <li className="nav-item">
+                      <Link className="nav-link" to="/saved-jobs">
+                        ❤️ Saved Jobs
+                      </Link>
+                    </li>
+                  </>
+                )}
+
+                {role === "recruiter" && (
+                  <>
+                    <li className="nav-item">
+                      <Link className="nav-link" to="/recruiter">
+                        Dashboard
+                      </Link>
+                    </li>
+
+                    <li className="nav-item">
+                      <Link className="nav-link" to="/create-job">
+                        Post Job
+                      </Link>
+                    </li>
+                  </>
+                )}
+                {role === "admin" && (
+                  <>
+                    <li className="nav-item">
+                      <Link className="nav-link" to="/admin">
+                        Admin Dashboard
+                      </Link>
+                    </li>
+                  </>
+                )}
+
+                <li className="nav-item">
+                  <Link className="nav-link" to="/profile">
+                    Profile
+                  </Link>
+                </li>
+                <li className="nav-item me-3">
+                  <button
+                    className="btn btn-outline-light"
+                    onClick={() => setDarkMode(!darkMode)}
+                  >
+                    {darkMode ? "☀ Light" : "🌙 Dark"}
+                  </button>
+                </li>
+                <li className="nav-item">
+                  <button onClick={logout} className="btn btn-danger ms-lg-3">
+                    Logout
+                  </button>
+                </li>
+              </>
+            )}
+          </ul>
         </div>
-
       </div>
     </nav>
   );

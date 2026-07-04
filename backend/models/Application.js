@@ -7,13 +7,20 @@ const applicationSchema = new mongoose.Schema(
       ref: "Job",
       required: true,
     },
+
     applicant: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
-    }
+    },
+
+    status: {
+      type: String,
+      enum: ["Applied", "Under Review", "Interview", "Selected", "Rejected"],
+      default: "Applied",
+    },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 module.exports = mongoose.model("Application", applicationSchema);

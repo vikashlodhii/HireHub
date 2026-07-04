@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -10,25 +10,44 @@ import Home from "./pages/Home";
 import RecruiterDashboard from "./pages/RecruiterDashboard";
 import MyApplications from "./pages/MyApplications";
 import Profile from "./pages/Profile";
-import CreateJob from "./pages/CreateJob";   // ✅ ADD THIS
+import CreateJob from "./pages/CreateJob";
 import ProtectedRoute from "./pages/ProtectedRoute";
 import Navbar from "./components/Navbar";
+import EditJob from "./pages/EditJob";
+import SavedJobs from "./pages/SavedJobs";
+import EditProfile from "./pages/EditProfile";
+import AdminDashboard from "./pages/AdminDashboard";
 
 function App() {
+  const [darkMode, setDarkMode] = useState(
+    localStorage.getItem("theme") === "dark",
+  );
+
+  useEffect(() => {
+    if (darkMode) {
+      document.body.classList.add("bg-dark", "text-light");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.body.classList.remove("bg-dark", "text-light");
+      localStorage.setItem("theme", "light");
+    }
+  }, [darkMode]);
+
   return (
     <>
-      <Navbar />
+      <Navbar darkMode={darkMode} setDarkMode={setDarkMode} />
 
-      {/* ✅ Toast System */}
-      <ToastContainer position="top-right" autoClose={2000} />
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        theme={darkMode ? "dark" : "light"}
+      />
 
       <Routes>
-        {/* Public Routes */}
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
 
-        {/* Protected Routes */}
         <Route
           path="/home"
           element={
@@ -56,7 +75,7 @@ function App() {
           }
         />
 
-        {/* ✅ CREATE JOB ROUTE ADD */}
+        {/* cretar job */}
         <Route
           path="/create-job"
           element={
@@ -71,6 +90,38 @@ function App() {
           element={
             <ProtectedRoute>
               <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/edit-job/:id"
+          element={
+            <ProtectedRoute>
+              <EditJob />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/saved-jobs"
+          element={
+            <ProtectedRoute>
+              <SavedJobs />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/edit-profile"
+          element={
+            <ProtectedRoute>
+              <EditProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <AdminDashboard />
             </ProtectedRoute>
           }
         />

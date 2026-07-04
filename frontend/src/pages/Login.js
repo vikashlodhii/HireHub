@@ -12,25 +12,27 @@ function Login() {
     e.preventDefault();
 
     try {
-      const res = await axios.post(
-        "http://localhost:5000/api/users/login",
-        {
-          email,
-          password,
-        }
-      );
+      const res = await axios.post(`${process.env.REACT_APP_API}/users/login`, {
+        email,
+        password,
+      });
 
       localStorage.setItem("token", res.data.token);
 
+      // 👇 Ye 2 lines add karo
+      localStorage.setItem("role", res.data.user.role);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+
       alert("Login Successful ✅");
 
-      // ✅ Role Based Redirect
-      if (res.data.user.role === "recruiter") {
-        navigate("/recruiter");
-      } else {
-        navigate("/home");
-      }
-
+      // Role Based Redirect
+     if (res.data.user.role === "admin") {
+  navigate("/admin");
+} else if (res.data.user.role === "recruiter") {
+  navigate("/recruiter");
+} else {
+  navigate("/home");
+}
     } catch (error) {
       alert(error.response?.data?.message || "Login Failed ❌");
     }
@@ -64,9 +66,7 @@ function Login() {
             />
           </div>
 
-          <button className="btn btn-primary w-100">
-            Login
-          </button>
+          <button className="btn btn-primary w-100">Login</button>
         </form>
       </div>
     </div>

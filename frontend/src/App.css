@@ -1,38 +1,175 @@
-.App {
-  text-align: center;
+body{
+  margin:0;
+  font-family:'Segoe UI',sans-serif;
+  background:#f8f9fa;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.hero{
+  background:linear-gradient(135deg,#0d6efd,#4f8cff);
+  color:white;
+  min-height:90vh;
+  display:flex;
+  align-items:center;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+.hero h1{
+  font-size:3.4rem;
+  font-weight:700;
+}
+
+.hero p{
+  font-size:1.2rem;
+  opacity:.9;
+}
+
+.hero img{
+  width:100%;
+  animation:float 3s ease-in-out infinite;
+}
+
+@keyframes float{
+  0%{
+      transform:translateY(0px);
+  }
+  50%{
+      transform:translateY(-15px);
+  }
+  100%{
+      transform:translateY(0px);
   }
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.feature-card{
+  border:none;
+  border-radius:18px;
+  transition:.3s;
 }
 
-.App-link {
-  color: #61dafb;
+.feature-card:hover{
+  transform:translateY(-10px);
+  box-shadow:0 15px 30px rgba(0,0,0,.15);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.icon-box{
+  width:70px;
+  height:70px;
+  border-radius:50%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  margin:auto;
+  font-size:30px;
+  background:#0d6efd;
+  color:white;
+}
+
+.stats{
+  background:white;
+  border-radius:20px;
+  box-shadow:0 10px 30px rgba(0,0,0,.08);
+  margin-top:-70px;
+  position:relative;
+  z-index:5;
+}
+
+.counter{
+  font-size:2rem;
+  font-weight:bold;
+  color:#0d6efd;
+}
+
+.section-title{
+  font-weight:700;
+}
+
+.company-card{
+  border:none;
+  transition:.3s;
+}
+
+.company-card:hover{
+  transform:scale(1.05);
+}
+
+.cta{
+  background:#0d6efd;
+  color:white;
+  border-radius:25px;
+}
+
+.footer{
+  background:#111827;
+  color:white;
+}
+.feature-card{
+    border-radius:20px;
+    transition:0.4s;
+    cursor:pointer;
+}
+
+.feature-card:hover{
+    transform:translateY(-12px);
+}
+
+.company-card{
+    border-radius:18px;
+    transition:0.4s;
+    cursor:pointer;
+}
+
+.company-card:hover{
+    transform:scale(1.05);
+}
+.card {
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+}
+
+.badge {
+  font-size: 0.85rem;
+}
+.card{
+  transition:0.3s;
+}
+
+.card:hover{
+  transform:translateY(-8px);
+}
+
+.btn{
+  transition:0.3s;
+}
+
+.btn:hover{
+  transform:scale(1.03);
+}
+
+.badge{
+  font-size:0.85rem;
+}
+.navbar-brand{
+    letter-spacing:1px;
+}
+
+.nav-link{
+    font-weight:500;
+    transition:.3s;
+}
+
+.nav-link:hover{
+    color:#ffd54f !important;
+}
+
+.navbar{
+    z-index:999;
+}
+.card img{
+    object-fit:cover;
+}
+
+.badge{
+    font-size:.9rem;
 }

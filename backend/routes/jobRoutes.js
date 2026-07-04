@@ -5,62 +5,79 @@ const Job = require("../models/Job");
 const authMiddleware = require("../middleware/authMiddleware");
 const roleMiddleware = require("../middleware/roleMiddleware");
 
-// ================= CREATE JOB (Recruiter Only) =================
 router.post(
   "/create",
   authMiddleware,
   roleMiddleware("recruiter"),
   async (req, res) => {
     try {
-      const { title, description, company, location } = req.body;
+      const {
+        title,
+        description,
+        company,
+        location,
+        salary,
+        jobType,
+        experience,
+        skills,
+        vacancies,
+      } = req.body;
 
       const job = new Job({
         title,
         description,
         company,
         location,
+        salary,
+        jobType,
+        experience,
+        vacancies,
+        skills: skills ? skills.split(",").map((item) => item.trim()) : [],
         postedBy: req.user.id,
       });
 
       await job.save();
 
       res.status(201).json({ message: "Job posted successfully", job });
-
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
-  }
+  },
 );
 
-// ================= GET ALL JOBS =================
-// ================= GET ALL JOBS (With Search) =================
 router.get("/", async (req, res) => {
   try {
-    const { search } = req.query;
+    const { search, location, jobType } = req.query;
 
     let query = {};
 
     if (search) {
-      query = {
-        $or: [
-          { title: { $regex: search, $options: "i" } },
-          { company: { $regex: search, $options: "i" } },
-          { location: { $regex: search, $options: "i" } },
-        ],
+      query.$or = [
+        { title: { $regex: search, $options: "i" } },
+        { company: { $regex: search, $options: "i" } },
+        { skills: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    if (location) {
+      query.location = {
+        $regex: location,
+        $options: "i",
       };
+    }
+
+    if (jobType) {
+      query.jobType = jobType;
     }
 
     const jobs = await Job.find(query).populate("postedBy", "name email");
 
     res.status(200).json(jobs);
-
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-
-// ================= GET MY JOBS (Recruiter Only) =================
 router.get(
   "/my-jobs",
   authMiddleware,
@@ -70,13 +87,11 @@ router.get(
       const jobs = await Job.find({ postedBy: req.user.id });
 
       res.status(200).json(jobs);
-
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
-  }
+  },
 );
-// ================= RECRUITER STATS =================
 router.get(
   "/recruiter/stats",
   authMiddleware,
@@ -85,23 +100,19 @@ router.get(
     try {
       const recruiterId = req.user.id;
 
-      // Total jobs posted by recruiter
       const totalJobs = await Job.countDocuments({
         postedBy: recruiterId,
       });
 
-      // Get job IDs of recruiter
       const jobs = await Job.find({ postedBy: recruiterId });
-      const jobIds = jobs.map(job => job._id);
+      const jobIds = jobs.map((job) => job._id);
 
-      // Total applications for those jobs
       const Application = require("../models/Application");
 
       const totalApplications = await Application.countDocuments({
         job: { $in: jobIds },
       });
 
-      // Unique applicants count
       const uniqueApplicants = await Application.distinct("applicant", {
         job: { $in: jobIds },
       });
@@ -111,13 +122,11 @@ router.get(
         totalApplications,
         totalApplicants: uniqueApplicants.length,
       });
-
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
-  }
+  },
 );
-// ================= DELETE JOB =================
 router.delete(
   "/delete/:id",
   authMiddleware,
@@ -134,14 +143,12 @@ router.delete(
       }
 
       res.json({ message: "Job deleted successfully" });
-
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
-  }
+  },
 );
 
-// ================= UPDATE JOB =================
 router.put(
   "/update/:id",
   authMiddleware,
@@ -151,7 +158,7 @@ router.put(
       const updatedJob = await Job.findOneAndUpdate(
         { _id: req.params.id, postedBy: req.user.id },
         req.body,
-        { new: true }
+        { new: true },
       );
 
       if (!updatedJob) {
@@ -159,13 +166,48 @@ router.put(
       }
 
       res.json(updatedJob);
-
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
-  }
+  },
 );
 
+router.get("/admin/jobs", authMiddleware, async (req, res) => {
+  try {
+    if (req.user.role !== "admin") {
+      return res.status(403).json({
+        message: "Access Denied",
+      });
+    }
 
+    const jobs = await Job.find().populate("postedBy", "name email");
+
+    res.json(jobs);
+  } catch (err) {
+    res.status(500).json({
+      error: err.message,
+    });
+  }
+});
+
+router.delete("/admin/job/:id", authMiddleware, async (req, res) => {
+  try {
+    if (req.user.role !== "admin") {
+      return res.status(403).json({
+        message: "Access Denied",
+      });
+    }
+
+    await Job.findByIdAndDelete(req.params.id);
+
+    res.json({
+      message: "Job Deleted Successfully",
+    });
+  } catch (err) {
+    res.status(500).json({
+      error: err.message,
+    });
+  }
+});
 
 module.exports = router;

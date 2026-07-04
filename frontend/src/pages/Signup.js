@@ -24,7 +24,7 @@ function Signup() {
 
     try {
       await axios.post(
-        "http://localhost:5000/api/users/signup",
+        `${process.env.REACT_APP_API}/users/signup`,
         formData
       );
 

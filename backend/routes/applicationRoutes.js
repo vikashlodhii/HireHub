@@ -6,7 +6,6 @@ const Job = require("../models/Job");
 const authMiddleware = require("../middleware/authMiddleware");
 const roleMiddleware = require("../middleware/roleMiddleware");
 
-
 // ================= APPLY JOB (Jobseeker Only) =================
 router.post(
   "/apply/:jobId",
@@ -23,7 +22,7 @@ router.post(
 
       const existingApplication = await Application.findOne({
         job: jobId,
-        applicant: req.user.id
+        applicant: req.user.id,
       });
 
       if (existingApplication) {
@@ -32,19 +31,17 @@ router.post(
 
       const application = new Application({
         job: jobId,
-        applicant: req.user.id
+        applicant: req.user.id,
       });
 
       await application.save();
 
       res.status(201).json({ message: "Job applied successfully" });
-
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
-  }
+  },
 );
-
 
 // ================= GET ALL APPLICATIONS FOR A JOB (Recruiter Only) =================
 router.get("/job/:jobId", authMiddleware, async (req, res) => {
@@ -55,16 +52,16 @@ router.get("/job/:jobId", authMiddleware, async (req, res) => {
 
     const { jobId } = req.params;
 
-    const applications = await Application.find({ job: jobId })
-      .populate("applicant", "name email role");
+    const applications = await Application.find({ job: jobId }).populate(
+      "applicant",
+      "name email role resume",
+    );
 
     res.status(200).json(applications);
-
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
-
 
 // ================= GET MY APPLICATIONS (Jobseeker Only) =================
 router.get("/my", authMiddleware, async (req, res) => {
@@ -74,14 +71,51 @@ router.get("/my", authMiddleware, async (req, res) => {
     }
 
     const applications = await Application.find({
-      applicant: req.user.id
+      applicant: req.user.id,
     }).populate("job");
 
     res.status(200).json(applications);
-
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
+// ================= UPDATE APPLICATION STATUS =================
+
+router.put(
+  "/status/:applicationId",
+  authMiddleware,
+  roleMiddleware("recruiter"),
+  async (req, res) => {
+    try {
+      const { status } = req.body;
+
+      const application = await Application.findById(
+        req.params.applicationId
+      );
+
+      if (!application) {
+        return res.status(404).json({
+          message: "Application not found",
+        });
+      }
+
+      application.status = status;
+
+      await application.save();
+
+      res.json({
+        message: "Application status updated successfully",
+        application,
+      });
+
+    } catch (err) {
+
+      res.status(500).json({
+        error: err.message,
+      });
+
+    }
+  }
+);
 
 module.exports = router;

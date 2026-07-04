@@ -1,36 +1,49 @@
 const mongoose = require("mongoose");
 
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  password: {
-    type: String,
-    required: true
-  },
-  role: {
-    type: String,
-    enum: ["jobseeker", "recruiter"],
-    required: true
-  },
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
 
-  // Job Seeker Fields
-  skills: String,
-  education: String,
-  experience: String,
-  resume: String,
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
 
-  // Recruiter Fields
-  companyName: String,
-  companyDescription: String,
-  location: String,
-  website: String
-}, { timestamps: true });
+    password: {
+      type: String,
+      required: true,
+    },
+
+    role: {
+      type: String,
+      enum: ["jobseeker", "recruiter", "admin"],
+      required: true,
+    },
+
+    skills: String,
+    education: String,
+    experience: String,
+    resume: String,
+
+    savedJobs: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Job",
+      },
+    ],
+
+    companyName: String,
+    companyDescription: String,
+    location: String,
+    website: String,
+  },
+  {
+    timestamps: true,
+  },
+);
 
 module.exports = mongoose.model("User", userSchema);

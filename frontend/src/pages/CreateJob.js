@@ -10,6 +10,11 @@ function CreateJob() {
   const [description, setDescription] = useState("");
   const [company, setCompany] = useState("");
   const [location, setLocation] = useState("");
+  const [salary, setSalary] = useState("");
+  const [jobType, setJobType] = useState("Full Time");
+  const [experience, setExperience] = useState("Fresher");
+  const [skills, setSkills] = useState("");
+  const [vacancies, setVacancies] = useState(1);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,13 +23,23 @@ function CreateJob() {
       const token = localStorage.getItem("token");
 
       await axios.post(
-        "http://localhost:5000/api/jobs/create",
-        { title, description, company, location },
+        `${process.env.REACT_APP_API}/jobs/create`,
+        {
+          title,
+          description,
+          company,
+          location,
+          salary,
+          jobType,
+          experience,
+          skills,
+          vacancies,
+        },
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       toast.success("Job Posted Successfully 🚀");
@@ -33,9 +48,13 @@ function CreateJob() {
       setDescription("");
       setCompany("");
       setLocation("");
+      setSalary("");
+      setJobType("Full Time");
+      setExperience("Fresher");
+      setSkills("");
+      setVacancies(1);
 
       navigate("/recruiter");
-
     } catch (error) {
       toast.error(error.response?.data?.message || "Error posting job ❌");
     }
@@ -44,9 +63,7 @@ function CreateJob() {
   return (
     <div className="container mt-5">
       <div className="card shadow-lg p-4 col-md-6 mx-auto">
-        <h3 className="text-center text-primary mb-4">
-          Post New Job 📝
-        </h3>
+        <h3 className="text-center text-primary mb-4">Post New Job 📝</h3>
 
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
@@ -93,6 +110,66 @@ function CreateJob() {
             />
           </div>
 
+          <div className="mb-3">
+            <label className="form-label">Salary (₹)</label>
+            <input
+              type="number"
+              className="form-control"
+              value={salary}
+              onChange={(e) => setSalary(e.target.value)}
+              placeholder="500000"
+              required
+              min="0"
+            />
+          </div>
+
+          <div className="mb-3">
+            <label className="form-label">Job Type</label>
+
+            <select
+              className="form-select"
+              value={jobType}
+              onChange={(e) => setJobType(e.target.value)}
+            >
+              <option>Full Time</option>
+              <option>Part Time</option>
+              <option>Internship</option>
+              <option>Remote</option>
+            </select>
+          </div>
+
+          <div className="mb-3">
+            <label className="form-label">Experience</label>
+
+            <input
+              className="form-control"
+              value={experience}
+              onChange={(e) => setExperience(e.target.value)}
+              placeholder="0-1 Years/ Freshers"
+            />
+          </div>
+
+          <div className="mb-3">
+            <label className="form-label">Skills (comma separated)</label>
+
+            <input
+              className="form-control"
+              value={skills}
+              onChange={(e) => setSkills(e.target.value)}
+              placeholder="React, Node, MongoDB"
+            />
+          </div>
+
+          <div className="mb-3">
+            <label className="form-label">Vacancies</label>
+
+            <input
+              type="number"
+              className="form-control"
+              value={vacancies}
+              onChange={(e) => setVacancies(e.target.value)}
+            />
+          </div>
           <button type="submit" className="btn btn-primary w-100">
             Post Job
           </button>
