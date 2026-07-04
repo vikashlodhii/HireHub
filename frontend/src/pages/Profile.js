@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -12,26 +12,28 @@ function Profile() {
   const [user, setUser] = useState({});
   const [resume, setResume] = useState(null);
 
+
+
+const fetchProfile = useCallback(async () => {
+  try {
+    const res = await axios.get(
+      `${process.env.REACT_APP_API}/users/profile`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    setUser(res.data);
+  } catch (err) {
+    console.log(err);
+  }
+}, [token]);
+
  useEffect(() => {
   fetchProfile();
-}, []);
-
-  const fetchProfile = async () => {
-    try {
-      const res = await axios.get(
-        `${process.env.REACT_APP_API}/users/profile`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
-      setUser(res.data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+}, [fetchProfile]);
 
   const uploadResume = async () => {
     if (!resume) {
