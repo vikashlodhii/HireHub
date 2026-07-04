@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
@@ -14,36 +14,38 @@ function RecruiterDashboard() {
 
   const token = localStorage.getItem("token");
 
-  useEffect(() => {
-    loadDashboard();
-  }, []);
+  
 
-  const loadDashboard = async () => {
-    try {
-      const statsRes = await axios.get(
-        `${process.env.REACT_APP_API}/jobs/recruiter/stats`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+  const loadDashboard = useCallback(async () => {
+  try {
+    const statsRes = await axios.get(
+      `${process.env.REACT_APP_API}/jobs/recruiter/stats`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
+      }
+    );
 
-      const jobsRes = await axios.get(
-        `${process.env.REACT_APP_API}/jobs/my-jobs`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+    const jobsRes = await axios.get(
+      `${process.env.REACT_APP_API}/jobs/my-jobs`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
+      }
+    );
 
-      setStats(statsRes.data);
-      setMyJobs(jobsRes.data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+    setStats(statsRes.data);
+    setMyJobs(jobsRes.data);
+  } catch (err) {
+    console.log(err);
+  }
+}, [token]);
+
+useEffect(() => {
+  loadDashboard();
+}, [loadDashboard]);
 
   const fetchApplicants = async (jobId) => {
     try {

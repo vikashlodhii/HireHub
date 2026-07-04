@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { toast } from "react-toastify";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
 function EditProfile() {
@@ -20,23 +18,26 @@ function EditProfile() {
     website: "",
   });
 
- useEffect(() => {
+useEffect(() => {
   fetchProfile();
-}, []);
+}, [fetchProfile]);
 
-  const fetchProfile = async () => {
-    try {
-      const res = await axios.get(`${process.env.REACT_APP_API}/users/profile`, {
+  const fetchProfile = useCallback(async () => {
+  try {
+    const res = await axios.get(
+      `${process.env.REACT_APP_API}/users/profile`,
+      {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      });
+      }
+    );
 
-      setForm(res.data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+    setForm(res.data);
+  } catch (err) {
+    console.log(err);
+  }
+}, [token]);
 
   const handleChange = (e) => {
     setForm({
