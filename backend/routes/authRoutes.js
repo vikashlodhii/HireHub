@@ -50,7 +50,7 @@ router.post("/login", async (req, res) => {
       return res.status(403).json({ message: "Unauthorized role" });
     }
 
-    jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
       expiresIn: "1d",
     });
 
