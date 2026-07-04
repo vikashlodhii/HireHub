@@ -7,8 +7,7 @@ const storage = new CloudinaryStorage({
   params: async (req, file) => ({
     folder: "hirehub/resumes",
     resource_type: "raw",
-    format: "pdf",
-    public_id: Date.now() + "-" + file.originalname.replace(".pdf", ""),
+    
   }),
 });
 
