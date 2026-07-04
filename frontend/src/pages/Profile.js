@@ -18,11 +18,14 @@ function Profile() {
 
   const fetchProfile = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API}/users/profile`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const res = await axios.get(
+        `${process.env.REACT_APP_API}/users/profile`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
 
       setUser(res.data);
     } catch (err) {
@@ -189,7 +192,7 @@ function Profile() {
               {user.resume && (
                 <div className="mt-3">
                   <a
-                    href={`http://localhost:5000${user.resume}`}
+                    href={user.resume}
                     target="_blank"
                     rel="noreferrer"
                     className="btn btn-primary me-2"
@@ -197,11 +200,7 @@ function Profile() {
                     👁 View Resume
                   </a>
 
-                  <a
-                    href={`http://localhost:5000${user.resume}`}
-                    download
-                    className="btn btn-success"
-                  >
+                  <a href={user.resume} download className="btn btn-success">
                     ⬇ Download Resume
                   </a>
                 </div>

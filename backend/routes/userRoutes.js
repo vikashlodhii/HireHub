@@ -2,60 +2,12 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
+const upload = require("../config/multer");
 const Application = require("../models/Application");
 
 const User = require("../models/User");
 const Job = require("../models/Job");
 const authMiddleware = require("../middleware/authMiddleware");
-
-const uploadPath = path.join(__dirname, "../uploads");
-
-if (!fs.existsSync(uploadPath)) {
-  fs.mkdirSync(uploadPath);
-}
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadPath);
-  },
-
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + "-" + file.originalname);
-  },
-});
-
-const upload = multer({
-  storage,
-});
-
-// router.post("/signup", async (req, res) => {
-//   try {
-//     const { name, email, password, role } = req.body;
-
-//     const existingUser = await User.findOne({ email });
-//     if (existingUser) {
-//       return res.status(400).json({ message: "User already exists" });
-//     }
-
-//     const hashedPassword = await bcrypt.hash(password, 10);
-
-//     const newUser = new User({
-//       name,
-//       email,
-//       password: hashedPassword,
-//       role,
-//     });
-
-//     await newUser.save();
-
-//     res.status(201).json({ message: "User registered successfully" });
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// });
 
 router.post("/signup", async (req, res) => {
   try {
@@ -83,7 +35,6 @@ router.post("/signup", async (req, res) => {
     res.status(201).json({
       message: "User registered successfully",
     });
-
   } catch (error) {
     console.log("SIGNUP ERROR:", error);
 
@@ -170,33 +121,25 @@ router.get("/saved-jobs", authMiddleware, async (req, res) => {
   }
 });
 
-router.delete(
-  "/unsave-job/:jobId",
-  authMiddleware,
-  async (req, res) => {
-    try {
+router.delete("/unsave-job/:jobId", authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
 
-      const user = await User.findById(req.user.id);
+    user.savedJobs = user.savedJobs.filter(
+      (job) => job.toString() !== req.params.jobId,
+    );
 
-      user.savedJobs = user.savedJobs.filter(
-        (job) => job.toString() !== req.params.jobId
-      );
+    await user.save();
 
-      await user.save();
-
-      res.json({
-        message: "Job Removed Successfully",
-      });
-
-    } catch (err) {
-
-      res.status(500).json({
-        error: err.message,
-      });
-
-    }
+    res.json({
+      message: "Job Removed Successfully",
+    });
+  } catch (err) {
+    res.status(500).json({
+      error: err.message,
+    });
   }
-);
+});
 
 router.post(
   "/upload-resume",
@@ -212,8 +155,7 @@ router.post(
 
       const user = await User.findById(req.user.id);
 
-      user.resume = `/uploads/${req.file.filename}`;
-
+      user.resume = req.file.path;
       await user.save();
 
       res.json({
