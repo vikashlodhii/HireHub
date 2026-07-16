@@ -12,28 +12,26 @@ function Profile() {
   const [user, setUser] = useState({});
   const [resume, setResume] = useState(null);
 
-
-
-const fetchProfile = useCallback(async () => {
-  try {
-    const res = await axios.get(
-      `${process.env.REACT_APP_API}/users/profile`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
+  const fetchProfile = useCallback(async () => {
+    try {
+      const res = await axios.get(
+        `${process.env.REACT_APP_API}/users/profile`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      }
-    );
+      );
 
-    setUser(res.data);
-  } catch (err) {
-    console.log(err);
-  }
-}, [token]);
+      setUser(res.data);
+    } catch (err) {
+      console.log(err);
+    }
+  }, [token]);
 
- useEffect(() => {
-  fetchProfile();
-}, [fetchProfile]);
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
 
   const uploadResume = async () => {
     if (!resume) {
@@ -178,34 +176,45 @@ const fetchProfile = useCallback(async () => {
                 </>
               )}
 
-              <h4 className="mb-3">Resume</h4>
+              {role === "jobseeker" && (
+                <>
+                  <h4 className="mb-3">Resume</h4>
 
-              <input
-                type="file"
-                className="form-control"
-                accept=".pdf"
-                onChange={(e) => setResume(e.target.files[0])}
-              />
+                  <input
+                    type="file"
+                    className="form-control"
+                    accept=".pdf"
+                    onChange={(e) => setResume(e.target.files[0])}
+                  />
 
-              <button className="btn btn-success mt-3" onClick={uploadResume}>
-                Upload Resume
-              </button>
-
-              {user.resume && (
-                <div className="mt-3">
-                  <a
-                    href={user.resume}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="btn btn-primary me-2"
+                  <button
+                    className="btn btn-success mt-3"
+                    onClick={uploadResume}
                   >
-                    👁 View Resume
-                  </a>
+                    Upload Resume
+                  </button>
 
-                  <a href={user.resume} download className="btn btn-success">
-                    ⬇ Download Resume
-                  </a>
-                </div>
+                  {user.resume && (
+                    <div className="mt-3">
+                      <a
+                        href={user.resume}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="btn btn-primary me-2"
+                      >
+                        👁 View Resume
+                      </a>
+
+                      <a
+                        href={user.resume}
+                        download
+                        className="btn btn-success"
+                      >
+                        ⬇ Download Resume
+                      </a>
+                    </div>
+                  )}
+                </>
               )}
 
               <div className="text-center mt-5">

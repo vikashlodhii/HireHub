@@ -14,38 +14,36 @@ function RecruiterDashboard() {
 
   const token = localStorage.getItem("token");
 
-  
-
   const loadDashboard = useCallback(async () => {
-  try {
-    const statsRes = await axios.get(
-      `${process.env.REACT_APP_API}/jobs/recruiter/stats`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
+    try {
+      const statsRes = await axios.get(
+        `${process.env.REACT_APP_API}/jobs/recruiter/stats`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      }
-    );
+      );
 
-    const jobsRes = await axios.get(
-      `${process.env.REACT_APP_API}/jobs/my-jobs`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const jobsRes = await axios.get(
+        `${process.env.REACT_APP_API}/jobs/my-jobs`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      }
-    );
+      );
 
-    setStats(statsRes.data);
-    setMyJobs(jobsRes.data);
-  } catch (err) {
-    console.log(err);
-  }
-}, [token]);
+      setStats(statsRes.data);
+      setMyJobs(jobsRes.data);
+    } catch (err) {
+      console.log(err);
+    }
+  }, [token]);
 
-useEffect(() => {
-  loadDashboard();
-}, [loadDashboard]);
+  useEffect(() => {
+    loadDashboard();
+  }, [loadDashboard]);
 
   const fetchApplicants = async (jobId) => {
     try {
@@ -275,20 +273,21 @@ useEffect(() => {
                 {app.applicant?.resume && (
                   <div className="mt-2">
                     <a
-                      href={`http://localhost:5000${app.applicant.resume}`}
+                      href={app.applicant.resume}
                       target="_blank"
-                      rel="noreferrer"
+                      rel="noopener noreferrer"
                       className="btn btn-sm btn-primary me-2 mb-1"
                     >
                       👁 View Resume
                     </a>
 
                     <a
-                      href={`http://localhost:5000${app.applicant.resume}`}
-                      download
+                      href={app.applicant.resume}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="btn btn-sm btn-success"
                     >
-                      ⬇ Download
+                      ⬇ Download Resume
                     </a>
                   </div>
                 )}

@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const upload = require("../config/multer");
 const Application = require("../models/Application");
+const cloudinary = require("../config/cloudinary");
 
 const User = require("../models/User");
 const Job = require("../models/Job");
@@ -151,6 +152,15 @@ router.post(
         return res.status(400).json({
           message: "Please upload a resume",
         });
+      }
+      try {
+        const result = await cloudinary.api.resource(req.file.filename, {
+          resource_type: "image",
+        });
+
+        console.log("CLOUDINARY RESULT:", result);
+      } catch (e) {
+        console.log("CLOUDINARY ERROR:", e);
       }
 
       const user = await User.findById(req.user.id);

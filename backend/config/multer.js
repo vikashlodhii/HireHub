@@ -6,7 +6,7 @@ const storage = new CloudinaryStorage({
   cloudinary,
   params: async (req, file) => ({
     folder: "hirehub/resumes",
-    resource_type: "raw",
+    resource_type: "auto",
     
   }),
 });
